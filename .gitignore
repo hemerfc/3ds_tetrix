@@ -30,3 +30,9 @@
 *.exe
 *.out
 *.app
+
+# 3ds devkit compiler
+*.3dsx
+*.elf
+*.smdh
+build/
