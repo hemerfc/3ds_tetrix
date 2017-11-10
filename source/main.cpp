@@ -30,6 +30,12 @@ int main(int argc, char **argv) {
 		if (kDown & KEY_START)  // KEY_START, KEY_Y, KEY_UP, KEY_DOWN
 			break; // break here to return to hbmenu
 
+		if (kDown & KEY_DLEFT)  // KEY_START, KEY_Y, KEY_UP, KEY_DOWN
+			game.Left();
+    if (kDown & KEY_DRIGHT)  // KEY_START, KEY_Y, KEY_UP, KEY_DOWN
+			game.Right();
+
+
 		// update object here
 		game.Update();
 

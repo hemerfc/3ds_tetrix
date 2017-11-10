@@ -56,9 +56,9 @@ void Gfx :: Init() {
 
   lodepng_decode32(&image, &width, &height, ballsprites_png, ballsprites_png_size);
 
-  printf("\x1b[1;1Hwidth:      %d\x1b[K", width);
-  printf("\x1b[2;1Hheight:     %d\x1b[K", height);
-  printf("\x1b[3;1Hresult:     %d\x1b[K", (width*height*4));
+  //printf("\x1b[1;1Hwidth:      %d\x1b[K", width);
+  //printf("\x1b[2;1Hheight:     %d\x1b[K", height);
+  //printf("\x1b[3;1Hresult:     %d\x1b[K", (width*height*4));
 
   u8* gpusrc = (u8*)linearAlloc(width*height*4);
 
@@ -119,6 +119,8 @@ void Gfx :: Render(void) {
 	C3D_DrawArrays(GPU_TRIANGLES, 0, numSprites * 6);
 
 	C3D_FrameEnd(0);
+
+	sprite_idx = 0;
 }
 
 void Gfx :: Destroy(void) {
@@ -134,14 +136,14 @@ void Gfx :: Destroy(void) {
 }
 
 //---------------------------------------------------------------------------------
-void Gfx :: DrawSprite( size_t idx, float x, float y, int width, int height, int image ) {
+size_t Gfx :: DrawSprite(float x, float y, int width, int height, int image ) {
 //---------------------------------------------------------------------------------
 	float left = images[image].left;
 	float right = images[image].right;
 	float top = images[image].top;
 	float bottom = images[image].bottom;
 
-	VBOEntry *entry = &vbo[idx*6];
+	VBOEntry *entry = &vbo[sprite_idx*6];
 
 	*entry++ = (VBOEntry){ x,       y,        0.5f, left,  top    };
 	*entry++ = (VBOEntry){ x,       y+height, 0.5f, left,  bottom };
@@ -150,4 +152,8 @@ void Gfx :: DrawSprite( size_t idx, float x, float y, int width, int height, int
 	*entry++ = (VBOEntry){ x+width, y,        0.5f, right, top    };
 	*entry++ = (VBOEntry){ x,       y+height, 0.5f, left,  bottom };
 	*entry++ = (VBOEntry){ x+width, y+height, 0.5f, right, bottom };
+
+	sprite_idx = sprite_idx +1;
+
+	return sprite_idx;
 }

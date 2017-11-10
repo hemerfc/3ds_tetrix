@@ -33,6 +33,7 @@ class Gfx
 					shaderProgram_s program;
 					int uLoc_projection;
 					C3D_Mtx projection;
+					size_t sprite_idx = 0; // add 1 to each sprite, reset after render
 					size_t numSprites = 256;
 					C3D_Tex spritesheet_tex;
 					C3D_RenderTarget* target;
@@ -40,7 +41,7 @@ class Gfx
           void Init();
           void Render();
 					void Destroy();
-          void DrawSprite(size_t idx, float x, float y, int width, int height, int image );
+          size_t DrawSprite(float x, float y, int width, int height, int image );
 };
 
 #endif

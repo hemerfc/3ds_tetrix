@@ -6,13 +6,13 @@
 #include "gfx.h"
 
 #define X_LENGHT      10
-#define Y_LENGHT      20
+#define Y_LENGHT      15
 #define TILE_SIZE     16
 #define TILES_X_OFFSET  (400/2)-((X_LENGHT*TILE_SIZE)/2) // start point of tiles
 
 typedef struct {
-	int x,y;
-	int tiles[3][3];
+	int tx,ty; // x, y of block, in tiles
+	int tiles[4][4];
 } Block;
 
 class Game
@@ -26,6 +26,8 @@ class Game
           void Init(Gfx _gfx);
           void Update();
           void Render();
+					void Left();
+					void Right();
 };
 
 #endif
