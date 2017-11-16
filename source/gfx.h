@@ -27,7 +27,7 @@ typedef struct {
 
 class Gfx
 {
-     private :
+     private:
           VBOEntry *vbo;
 					DVLB_s* vshader_dvlb;
 					shaderProgram_s program;
@@ -37,7 +37,7 @@ class Gfx
 					size_t numSprites = 256;
 					C3D_Tex spritesheet_tex;
 					C3D_RenderTarget* target;
-     public :
+     public:
           void Init();
           void Render();
 					void Destroy();
