@@ -37,20 +37,14 @@ int main(int argc, char **argv) {
 		if (kDown & KEY_START)
 			break;  // break here to return to hbmenu
 
-		/*
-
-		if (kDown & KEY_DLEFT)  // KEY_START, KEY_Y, KEY_UP, KEY_DOWN
-			game.Left();
-    if (kDown & KEY_DRIGHT)  // KEY_START, KEY_Y, KEY_UP, KEY_DOWN
-			game.Right();
-		*/
-
     // calc elapsed time
-		double elapsed = (svcGetSystemTick() - initialTime)/TICKS_PER_SEC;
-		// printf("\x1b[4;1Helapsed: %.2f", (float)elapsed);
+		double now = svcGetSystemTick();
+    double elapsed = (now - initialTime)/TICKS_PER_SEC;
 
 		// update game state
 		game.Update(elapsed, kDown, kUp, kHeld);
+
+    initialTime = now;
 
 		// render the graphics
 		game.Render(gfx);
