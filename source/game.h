@@ -14,12 +14,9 @@
 
 typedef struct {
 	double tx,ty;       // x, y of block, in tiles
-	double vStepDuration;  // duration of each vertical step
-	double hStepDuration;  // duration of each horizontal step
-	double leftRightHoldStart;
-	bool leftRightMoveStart;
 	int tiles[4][4];
-	int lenght;
+	int width;
+	int height;
 } Block;
 
 class Game
@@ -29,14 +26,7 @@ class Game
           Block block;
 					void newBlock();
 					void setBlockTiles(int id, int rot, int color);
-					bool keyLeft = false;
-					bool keyRight = false;
-					bool keyDown = false;
-					bool keyUp = false;
-     public :
-          void Init();
-          void Update(double elapsed, u32 kDown, u32 kUp, u32 kHeld);
-          void Render(Gfx gfx);
+					void solidifyBlock();
 					bool checkColision();
 					void moveBlockLeft();
 					void moveBlockRight();
@@ -44,6 +34,19 @@ class Game
 					void moveBlockUp();
 					void rotateBlockCW();
 					void rotateBlockCCW();
+					bool keyLeft = false;
+					bool keyRight = false;
+					bool keyDown = false;
+					bool keyUp = false;
+					double vStepDuration;  // duration of each vertical step
+					double hStepDuration;  // duration of each horizontal step
+					double moveKeyHoldStart;
+					bool moveStart;
+					double gameStep;
+     public :
+          void Init();
+          void Update(double elapsed, u32 kDown, u32 kUp, u32 kHeld);
+          void Render(Gfx gfx);
 };
 
 #endif

@@ -5,8 +5,8 @@
 void Game :: Init()
 {
   srand(time(NULL));
-  block.vStepDuration = 0.15f;
-  block.hStepDuration = 0.15f;
+  vStepDuration = 1.0f;
+  hStepDuration = 0.15f;
 
   newBlock();
 
@@ -27,6 +27,15 @@ void Game :: Init()
 
 void Game :: Update(double elapsed, u32 kDown, u32 kUp, u32 kHeld)
 {
+  gameStep += elapsed;
+  if(gameStep >= vStepDuration) { // run one step
+      gameStep = 0;
+      if(moveBlockDown()){
+        solidifyBlock();
+        newBlock();
+      }
+  }
+
   // move the block to left
   if (kDown & KEY_DLEFT) {
     moveBlockLeft();
@@ -45,7 +54,7 @@ void Game :: Update(double elapsed, u32 kDown, u32 kUp, u32 kHeld)
     keyRight = false;
   }
 
-  // move the block to right
+  // move the block to down
   if (kDown & KEY_DDOWN) {
     moveBlockDown();
     keyRight = true;
@@ -54,7 +63,7 @@ void Game :: Update(double elapsed, u32 kDown, u32 kUp, u32 kHeld)
     keyRight = false;
   }
 
-  // move the block to right
+  // move the block to up
   if (kDown & KEY_DUP) {
     moveBlockUp();
     keyUp = true;
@@ -63,15 +72,15 @@ void Game :: Update(double elapsed, u32 kDown, u32 kUp, u32 kHeld)
     keyUp = false;
   }
 
-  // move the block if key hold
+  // move the block if a key is hold
   if (keyLeft || keyRight || keyDown || keyUp)
   {
-    block.leftRightHoldStart += elapsed;
-    if(block.leftRightHoldStart >= (block.hStepDuration * 2) || // to start move wait two steps
-       (block.leftRightHoldStart >= block.hStepDuration && block.leftRightMoveStart)) // next moves wait one step
+    moveKeyHoldStart += elapsed;
+    if(moveKeyHoldStart >= (hStepDuration * 2) || // to start move wait two steps
+       (moveKeyHoldStart >= hStepDuration && moveStart)) // next moves wait one step
     {
-      block.leftRightMoveStart = true;
-      block.leftRightHoldStart = 0; // reset start timer
+      moveStart = true;
+      moveKeyHoldStart = 0; // reset start timer
       // move the block
       if (keyLeft) {
         moveBlockLeft();
@@ -88,8 +97,8 @@ void Game :: Update(double elapsed, u32 kDown, u32 kUp, u32 kHeld)
     }
   }
   else {
-    block.leftRightHoldStart = 0; // reset timer
-    block.leftRightMoveStart = false;
+    moveKeyHoldStart = 0; // reset timer
+    moveStart = false;
   }
 }
 
@@ -116,16 +125,27 @@ void Game :: Render(Gfx gfx)
       }
     }
   }
-
   gfx.Render();
 }
 
 void Game :: newBlock() {
-  //int id = rand() & 3;
+  int id = rand() % 3;
 	int color = rand() & 3;
-	block.tx = 0.0;
-	block.ty = 0.0;
-  setBlockTiles(0,0,color);
+  setBlockTiles(id,0,color);
+  block.tx = X_LENGHT/2 - block.width;
+	block.ty = -block.height;
+}
+
+void Game :: solidifyBlock() {
+  for(int py = 0; py < 4; py++) {
+    for(int px = 0; px < 4; px++) {
+      if(block.tiles[px][py] >= 0) { // if have a tile in block
+        int x = (block.tx + px);
+        int y = (block.ty + py);
+        tiles[x][y] = block.tiles[px][py];
+      }
+    }
+  }
 }
 
 void Game :: setBlockTiles(int id, int rot, int color) {
@@ -135,11 +155,36 @@ void Game :: setBlockTiles(int id, int rot, int color) {
 
 	switch (id) {
 		case 0:
-			block.tiles[0][2] = color;
-      block.tiles[0][3] = color;
+			block.tiles[0][0] = color;
+      block.tiles[0][1] = color;
+      block.tiles[1][0] = color;
+      block.tiles[1][1] = color;
+      block.height = 2;
+      block.width = 2;
+		break;
+    case 1:
+			block.tiles[0][0] = color;
+      block.tiles[0][1] = color;
+      block.tiles[1][1] = color;
       block.tiles[1][2] = color;
-      block.tiles[1][3] = color;
-      block.lenght = 2;
+      block.height = 3;
+      block.width = 2;
+		break;
+    case 2:
+    block.tiles[1][0] = color;
+    block.tiles[0][1] = color;
+    block.tiles[1][1] = color;
+    block.tiles[0][2] = color;
+    block.height = 3;
+    block.width = 2;
+		break;
+    case 3:
+			block.tiles[0][0] = color;
+      block.tiles[0][1] = color;
+      block.tiles[0][2] = color;
+      block.tiles[0][3] = color;
+      block.height = 4;
+      block.width = 1;
 		break;
 	}
 }
@@ -161,10 +206,10 @@ bool Game :: checkColision() {
           return true;
         }
 
-        if(y < 0) {
-          printf("\x1b[1;1HColision: Y<0\x1b[K");
-          return true;
-        }
+        //if(y < 0) {
+        //  printf("\x1b[1;1HColision: Y<0\x1b[K");
+        //  return true;
+        //}
         if(y >= Y_LENGHT) {
           printf("\x1b[1;1HColision: Y>=Y_LENGHT\x1b[K");
           return true;
